@@ -18,6 +18,7 @@ import {
   SafeResourceUrl,
   SafeHtml,
 } from '@angular/platform-browser';
+import { B2Service } from '../../services/b2.service';
 @Component({
   selector: 'app-merit-detail',
   standalone: true,
@@ -29,7 +30,7 @@ import {
     MatIconModule,
     MatButtonModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './merit-detail.component.html',
   styleUrl: './merit-detail.component.scss',
@@ -44,15 +45,23 @@ export class MeritDetailComponent {
   selectedImageIndex = 0;
   safeDescription!: SafeHtml;
   statusOptions: Option[] = statusOptions;
+  b2files: any[] = [];
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private supabase: SupabaseService,
     private snackBar: MatSnackBar,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private b2Service: B2Service
   ) {}
 
   async ngOnInit() {
+    try {
+      this.b2files = await this.b2Service.listFiles();
+      console.log('B2 files:', this.b2files);
+    } catch (err) {
+      console.error('Error listing B2 files:', err);
+    }
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       const result = await this.supabase.getMeritById(Number(id));
@@ -147,9 +156,8 @@ export class MeritDetailComponent {
       .filter((url): url is SafeResourceUrl => url !== null);
   }
 
-getStatusLabel(value: string): string {
-  const option = this.statusOptions.find((o) => o.value === value);
-  return option ? option.label : value;
-}
-
+  getStatusLabel(value: string): string {
+    const option = this.statusOptions.find((o) => o.value === value);
+    return option ? option.label : value;
+  }
 }

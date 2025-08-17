@@ -3,6 +3,14 @@
 </div>
 <div *ngIf="error">{{ error }}</div>
 
+
+<div *ngFor="let file of b2files">
+  <p>{{ file.downloadUrl }}</p>
+  <img [src]="file.downloadUrl" alt="{{ file.fileName }}" width="200" />
+</div>
+
+
+
 <div *ngIf="merit && !loading" class="detail-container">
   <!-- Title -->
   <header class="header-row">
