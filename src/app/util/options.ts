@@ -27,6 +27,12 @@ export const statusOptions = [
   { label: 'අත්හිටවූ ', value: 'ABANDONED' },
 ];
 
+export const receiversDefault = [
+  { label: 'බෝසත් විශ්මකර්ම සමූහය', value: 'bvf' },
+  { label: 'කලණ මිතුරු හමුව', value: 'kmh' },
+  { label: 'A.A. කලන අමරදාස මහතා', value: 'aaka' },
+];
+
 export interface Option {
   label: string;
   value: string;

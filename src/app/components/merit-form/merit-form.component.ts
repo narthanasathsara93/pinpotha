@@ -15,7 +15,12 @@ import { MatListModule } from '@angular/material/list';
 
 import { Router } from '@angular/router';
 import { Merit } from '../../models/merits.model';
-import { options, statusOptions, Option } from '../../util/options';
+import {
+  options,
+  statusOptions,
+  receiversDefault,
+  Option,
+} from '../../util/options';
 
 @Component({
   selector: 'app-merit-form',
@@ -47,7 +52,8 @@ export class MeritFormComponent {
   };
   types: Option[] = options;
   statusOptions: Option[] = statusOptions;
-
+  receiversDefault: Option[] = receiversDefault;
+  receiverDefault: string = '';
   previewUrl: string | null = null;
   filePreviews: string[] = [];
   imageUrl: string | null = null;
@@ -143,7 +149,10 @@ export class MeritFormComponent {
     this.loading = true;
 
     this.merit.date = this.formatDateWithoutTimezone(this.merit.date);
-
+    this.merit.receiver = this.receiverDefault
+      ? this.receiverDefault
+      : this.merit.receiver;
+      
     try {
       const uploadedUrls = await this.uploadSelectedImages();
       const finalImageUrls = [...this.existingImages, ...uploadedUrls].filter(
@@ -203,7 +212,7 @@ export class MeritFormComponent {
         uploadedUrls.push(url);
       }
     }
-    
+
     return uploadedUrls;
   }
 

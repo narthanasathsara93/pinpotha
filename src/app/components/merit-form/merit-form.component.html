@@ -21,6 +21,23 @@
     </mat-form-field>
 
     <!-- Receiver -->
+    <mat-label>ප්‍රතිග්‍රාහකයා/සංවිධායකයා</mat-label>
+    <br />
+    <select
+      matNativeControl
+      [(ngModel)]="receiverDefault"
+      name="type"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="merit.receiver = $event"
+    >
+      <option
+        *ngFor="let receiver of receiversDefault"
+        [value]="receiver.label"
+      >
+        {{ receiver.label }}
+      </option>
+    </select>
+
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>ප්‍රතිග්‍රාහකයා/සංවිධායකයා</mat-label>
       <input matInput [(ngModel)]="merit.receiver" name="receiver" />
