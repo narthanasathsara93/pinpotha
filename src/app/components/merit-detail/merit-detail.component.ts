@@ -167,17 +167,19 @@ export class MeritDetailComponent {
 
     if (!startDate && !endDate) this.activityPeriodExists = false;
 
+    const padDay = (day: number) => day.toString().padStart(2, '0');
+
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
 
       const startYear = start.getFullYear();
       const startMonth = start.getMonth();
-      const startDay = start.getDate();
+      const startDay = padDay(start.getDate());
 
       const endYear = end.getFullYear();
       const endMonth = end.getMonth();
-      const endDay = end.getDate();
+      let endDay = padDay(end.getDate());
 
       if (startYear === endYear && startMonth === endMonth) {
         // same year, same month
@@ -203,7 +205,7 @@ export class MeritDetailComponent {
       const start = new Date(startDate);
       return `${start.getFullYear()} ${this.getSinhalaMonth(
         start.getMonth()
-      )} ${start.getDate()}`;
+      )} ${padDay(start.getDate())}`;
     }
 
     // edge case: only endDate
