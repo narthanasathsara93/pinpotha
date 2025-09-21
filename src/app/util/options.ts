@@ -31,6 +31,7 @@ export const receiversDefault = [
   { label: 'බෝසත් විශ්මකර්ම සමූහය', value: 'bvf' },
   { label: 'කලණ මිතුරු හමුව', value: 'kmh' },
   { label: 'A.A. කලන අමරදාස මහතා', value: 'aaka' },
+  { label: 'සසුන් කෙත අස්වද්දමු සමූහය', value: 'ska' },
 ];
 
 export interface Option {
