@@ -7,7 +7,9 @@ export interface Merit {
   video_urls: string[];
   receiver: string;
   date: string;
-  status:string;
+  activity_start_date: string;
+  activity_end_date: string;
+  status: string;
   created_at: string;
   updated_at: string;
 }

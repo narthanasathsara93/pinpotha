@@ -12,7 +12,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 
-import { statusOptions, Option } from '../../util/options';
+import { statusOptions, sinhalaMonths, Option } from '../../util/options';
+import { formatDateWithoutTimezone } from '../../util/meritForm';
+
 import {
   DomSanitizer,
   SafeResourceUrl,
@@ -29,7 +31,7 @@ import {
     MatIconModule,
     MatButtonModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './merit-detail.component.html',
   styleUrl: './merit-detail.component.scss',
@@ -44,6 +46,10 @@ export class MeritDetailComponent {
   selectedImageIndex = 0;
   safeDescription!: SafeHtml;
   statusOptions: Option[] = statusOptions;
+  activityPeriodText: string = '';
+  activityPeriodExists: boolean = false;
+  activityPeriod: any = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -56,9 +62,12 @@ export class MeritDetailComponent {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       const result = await this.supabase.getMeritById(Number(id));
+
       if (result) {
         this.merit = result;
         this.getSanitizedPreviewUrls();
+        this.getActivityPeriodText();
+        this.activityPeriod = this.getActivityPeriod();
       } else {
         this.router.navigate(['/merits']);
       }
@@ -147,9 +156,109 @@ export class MeritDetailComponent {
       .filter((url): url is SafeResourceUrl => url !== null);
   }
 
-getStatusLabel(value: string): string {
-  const option = this.statusOptions.find((o) => o.value === value);
-  return option ? option.label : value;
-}
+  getStatusLabel(value: string): string {
+    const option = this.statusOptions.find((o) => o.value === value);
+    return option ? option.label : value;
+  }
 
+  getActivityPeriod(): string | null {
+    const startDate = this.merit.activity_start_date;
+    const endDate = this.merit.activity_end_date;
+
+    if (!startDate && !endDate) this.activityPeriodExists = false;
+
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      const startYear = start.getFullYear();
+      const startMonth = start.getMonth();
+      const startDay = start.getDate();
+
+      const endYear = end.getFullYear();
+      const endMonth = end.getMonth();
+      const endDay = end.getDate();
+
+      if (startYear === endYear && startMonth === endMonth) {
+        // same year, same month
+        return `${startYear} ${this.getSinhalaMonth(
+          startMonth
+        )} ${startDay} ~ ${endDay}`;
+      }
+
+      if (startYear === endYear) {
+        // same year, different month
+        return `${startYear} ${this.getSinhalaMonth(
+          startMonth
+        )} ${startDay} ~ ${this.getSinhalaMonth(endMonth)} ${endDay}`;
+      }
+
+      // different years
+      return `${startYear} ${this.getSinhalaMonth(
+        startMonth
+      )} ${startDay} ~ ${endYear} ${this.getSinhalaMonth(endMonth)} ${endDay}`;
+    }
+
+    if (startDate) {
+      const start = new Date(startDate);
+      return `${start.getFullYear()} ${this.getSinhalaMonth(
+        start.getMonth()
+      )} ${start.getDate()}`;
+    }
+
+    // edge case: only endDate
+    const end = new Date(endDate!);
+    return `${end.getFullYear()} ${this.getSinhalaMonth(
+      end.getMonth()
+    )} ${end.getDate()}`;
+  }
+
+  getSinhalaMonth(monthIndex: number): string {
+    return sinhalaMonths[monthIndex];
+  }
+
+  getActivityPeriodText() {
+    this.activityPeriodText = this.checkDateStatus(
+      this.merit.activity_start_date,
+      this.merit.activity_end_date
+    );
+  }
+
+  formatSinhalaDate(dateString: string): string {
+    const date = new Date(dateString);
+
+    const year = date.getFullYear();
+    const month = sinhalaMonths[date.getMonth()];
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year} ${month} ${day}`;
+  }
+
+  checkDateStatus(startDateStr: string, endDateStr?: string): any {
+    const todayStr = formatDateWithoutTimezone(new Date());
+
+    if (!startDateStr && !endDateStr) {
+      this.activityPeriodExists = false;
+    }
+    this.activityPeriodExists = true;
+    if (endDateStr) {
+      // ✅ Case 1: range
+      if (endDateStr < todayStr) {
+        return 'කළ';
+      } else if (startDateStr > todayStr) {
+        return 'කරන';
+      } else {
+        return 'කරන';
+      }
+    } else {
+      // ✅ Case 2: only start date
+      if (startDateStr === todayStr) {
+        return 'කරන';
+      } else if (startDateStr < todayStr) {
+        return 'කළ';
+      } else {
+        return 'කරන';
+      }
+    }
+  }
 }

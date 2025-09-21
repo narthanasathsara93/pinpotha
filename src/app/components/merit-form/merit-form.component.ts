@@ -21,6 +21,7 @@ import {
   receiversDefault,
   Option,
 } from '../../util/options';
+import { formatDateWithoutTimezone } from '../../util/meritForm';
 
 @Component({
   selector: 'app-merit-form',
@@ -49,7 +50,10 @@ export class MeritFormComponent {
     status: '',
     image_urls: [],
     date: '',
+    activity_start_date: '',
+    activity_end_date: '',
   };
+
   types: Option[] = options;
   statusOptions: Option[] = statusOptions;
   receiversDefault: Option[] = receiversDefault;
@@ -65,6 +69,7 @@ export class MeritFormComponent {
   videoUrlsArray: string[] = [];
   defaultStatus: string = 'DONE';
   isDragging = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -100,6 +105,8 @@ export class MeritFormComponent {
         receiver: '',
         image_urls: [],
         date: '',
+        activity_start_date: '',
+        activity_end_date: '',
       };
     }
   }
@@ -132,14 +139,6 @@ export class MeritFormComponent {
     }
   }
 
-  formatDateWithoutTimezone(date: string | Date): string {
-    const d = date instanceof Date ? date : new Date(date);
-    const year = d.getFullYear();
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
   async onSubmit() {
     if (!this.merit.title || !this.merit.date || !this.merit.type) {
       alert('Please fill all required fields.');
@@ -148,11 +147,18 @@ export class MeritFormComponent {
 
     this.loading = true;
 
-    this.merit.date = this.formatDateWithoutTimezone(this.merit.date);
+    this.merit.date = formatDateWithoutTimezone(this.merit.date);
+    this.merit.activity_start_date = this.merit.activity_start_date
+      ? formatDateWithoutTimezone(this.merit.activity_start_date)
+      : '';
+    this.merit.activity_end_date = this.merit.activity_end_date
+      ? formatDateWithoutTimezone(this.merit.activity_end_date)
+      : '';
+
     this.merit.receiver = this.receiverDefault
       ? this.receiverDefault
       : this.merit.receiver;
-      
+
     try {
       const uploadedUrls = await this.uploadSelectedImages();
       const finalImageUrls = [...this.existingImages, ...uploadedUrls].filter(
@@ -167,6 +173,8 @@ export class MeritFormComponent {
         type: this.merit.type!,
         receiver: this.merit.receiver || '',
         date: this.merit.date!,
+        activity_start_date: this.merit.activity_start_date || '',
+        activity_end_date: this.merit.activity_end_date || '',
         status: this.merit.status || this.defaultStatus,
         image_urls: finalImageUrls || [],
         video_urls: this.videoUrlsArray || [],

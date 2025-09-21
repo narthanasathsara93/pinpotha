@@ -11,6 +11,7 @@
 .file-name {
   font-size: 12px;
 }
+
 mat-form-field {
   width: 100%;
   margin-bottom: 1.5rem;
@@ -23,9 +24,18 @@ button-row {
   margin-top: 1.5rem;
 }
 
+.until-date {
+  margin-top: -9%;
+}
+
+.receiver-input {
+  margin-top: 1%;
+}
+
 button {
   min-width: 100px;
 }
+
 .image-section {
   background-color: #efefef;
   padding: 1rem;

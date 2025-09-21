@@ -31,6 +31,12 @@
       [innerHTML]="setSafeDescription(merit.description)"
     ></div>
   </section>
+  
+  <!-- Activity Date -->
+  <section class="activity-period-section" *ngIf="activityPeriodExists">
+    <h3>පිංකම සිදු {{ activityPeriodText }} දින වකවානු</h3>
+    <h2 class="activity-period">{{ activityPeriod }}</h2>
+  </section>
 
   <!-- Receiver -->
   <section class="receiver-section" *ngIf="merit?.receiver">
