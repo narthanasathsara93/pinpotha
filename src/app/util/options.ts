@@ -11,6 +11,7 @@ export const options = [
   { label: 'ස්වර්ණමාලී මහා සෑය', value: 'swarnamali_maha_seya' },
   { label: 'පිරිකර පූජා', value: 'pirikara_pooja' },
   { label: 'ශිලා සමාදාන', value: 'shila_samadana' },
+  { label: 'දන්සැල්', value: 'dansal' },
   { label: 'විවිධ දාන', value: 'vivida_dana' },
   { label: 'වන්දනා ගමන්', value: 'vandana_gaman' },
   { label: 'වන රෝපණ', value: 'wana_ropana' },
